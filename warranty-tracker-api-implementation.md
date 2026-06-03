@@ -93,8 +93,6 @@ CREATE TABLE brands (
 );
 ```
 
----
-
 ## Purchase Sources
 
 ```sql
@@ -104,8 +102,6 @@ CREATE TABLE purchase_sources (
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 ```
-
----
 
 ## Devices
 
@@ -124,8 +120,6 @@ CREATE TABLE devices (
         ON DELETE CASCADE
 );
 ```
-
----
 
 ## Warranty Registrations
 
