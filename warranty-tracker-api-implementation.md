@@ -87,8 +87,8 @@ dotnet add package Swashbuckle.AspNetCore
 
 ```sql
 CREATE TABLE brands (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(150) NOT NULL UNIQUE,
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(128) NOT NULL UNIQUE,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 ```
@@ -99,9 +99,8 @@ CREATE TABLE brands (
 
 ```sql
 CREATE TABLE purchase_sources (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(150) NOT NULL,
-    website VARCHAR(255),
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(128) NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 ```
@@ -112,33 +111,17 @@ CREATE TABLE purchase_sources (
 
 ```sql
 CREATE TABLE devices (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-
-    name VARCHAR(150) NOT NULL,
-
-    brand_id BIGINT NOT NULL,
-
-    model_number VARCHAR(100),
-
-    serial_number VARCHAR(150),
-
-    purchase_date DATE,
-
-    purchase_source_id BIGINT,
-
-    price DECIMAL(10,2),
-
-    notes TEXT,
-
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(128) NOT NULL,
+    brand_id INT NOT NULL,
+    model_number VARCHAR(50),
+    warranty_months INT NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_devices_brand
+    CONSTRAINT fk_device_brand
         FOREIGN KEY (brand_id)
-        REFERENCES brands(id),
-
-    CONSTRAINT fk_devices_purchase_source
-        FOREIGN KEY (purchase_source_id)
-        REFERENCES purchase_sources(id)
+        REFERENCES brands(id)
+        ON DELETE CASCADE
 );
 ```
 
@@ -147,24 +130,31 @@ CREATE TABLE devices (
 ## Warranty Registrations
 
 ```sql
-CREATE TABLE warranty_registrations (
+CREATE TABLE user_warranty_register (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
 
-    device_id BIGINT NOT NULL,
+    owner_name VARCHAR(128) NOT NULL,
+    email_address VARCHAR(100),
+    mobile_number VARCHAR(15) NOT NULL,
 
+    device_id INT NOT NULL,
+    purchase_source_id INT,
+
+    purchase_date DATE NOT NULL,
     warranty_start DATE NOT NULL,
 
-    warranty_end DATE NOT NULL,
-
-    registration_number VARCHAR(100),
-
-    remarks TEXT,
+    invoice_file VARCHAR(255),
+    notes TEXT,
 
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT fk_warranty_device
+    CONSTRAINT fk_register_device
         FOREIGN KEY (device_id)
-        REFERENCES devices(id)
+        REFERENCES devices(id),
+
+    CONSTRAINT fk_register_source
+        FOREIGN KEY (purchase_source_id)
+        REFERENCES purchase_sources(id)
 );
 ```
 
@@ -178,49 +168,32 @@ WarrantyTracker.Api
 ├── Controllers
 │   ├── BrandsController.cs
 │   ├── DevicesController.cs
-│   ├── PurchaseSourcesController.cs
-│   └── WarrantyRegistrationsController.cs
-│
-├── Services
-│   ├── Interfaces
-│   │   ├── IBrandService.cs
-│   │   ├── IDeviceService.cs
-│   │   ├── IPurchaseSourceService.cs
-│   │   └── IWarrantyRegistrationService.cs
-│   │
-│   ├── BrandService.cs
-│   ├── DeviceService.cs
-│   ├── PurchaseSourceService.cs
-│   └── WarrantyRegistrationService.cs
-│
-├── Repositories
-│   ├── Interfaces
-│   │   ├── IBrandRepository.cs
-│   │   ├── IDeviceRepository.cs
-│   │   ├── IPurchaseSourceRepository.cs
-│   │   └── IWarrantyRegistrationRepository.cs
-│   │
-│   ├── BrandRepository.cs
-│   ├── DeviceRepository.cs
-│   ├── PurchaseSourceRepository.cs
-│   └── WarrantyRegistrationRepository.cs
+│   └── WarrantiesController.cs
 │
 ├── Models
+│   ├── Brand.cs
+│   ├── Device.cs
+│   └── WarrantyRegistration.cs
 │
 ├── DTOs
+│   ├── BrandDto.cs
+│   ├── CreateBrandDto.cs
+│   ├── UpdateBrandDto.cs
+│   ├── DeviceDto.cs
+│   ├── CreateDeviceDto.cs
+│   └── UpdateDeviceDto.cs
 │
 ├── Data
 │   └── ApplicationDbContext.cs
 │
-├── Mappings
-│
-├── Common
-│
-├── Middleware
+├── Helpers
+│   └── WarrantyHelper.cs
 │
 ├── Program.cs
 │
-└── appsettings.json
+├── appsettings.json
+│
+└── appsettings.Development.json
 ```
 
 ---
