@@ -2,16 +2,13 @@
 
 ## Architecture
 
-<img width="35%" alt="software-architecture-stack-diagram" src="https://github.com/user-attachments/assets/0da13f6f-59dc-4bd2-b91b-16f5738108f9" />
+### Beginner-Friendly
+<img width="65%" alt="simplified-software-architecture-flow-diagram" src="https://github.com/user-attachments/assets/bc37809c-894f-4845-bfc0-4c6961971f50" />
 
 ```text
 Client
   ↓
 Controller
-  ↓
-Service
-  ↓
-Repository
   ↓
 DbContext
   ↓
