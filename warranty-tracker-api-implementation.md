@@ -1,0 +1,787 @@
+# Warranty Tracker API - .NET 8 Web API Implementation Guide
+
+## Architecture
+
+<img width="35%" alt="software-architecture-stack-diagram" src="https://github.com/user-attachments/assets/0da13f6f-59dc-4bd2-b91b-16f5738108f9" />
+
+```text
+Client
+  ↓
+Controller
+  ↓
+Service
+  ↓
+Repository
+  ↓
+DbContext
+  ↓
+MySQL Database
+```
+
+### Layer Responsibilities
+
+#### Controller
+
+* Receive HTTP Requests
+* Validate incoming DTOs
+* Call Service methods
+* Return HTTP responses
+
+#### Service
+
+* Business Logic
+* Validation Rules
+* DTO ↔ Entity Mapping
+* Transaction Coordination
+
+#### Repository
+
+* Database Access
+* EF Core Queries
+* CRUD Operations
+* Filtering and Includes
+
+#### DbContext
+
+* Entity Configuration
+* Relationships
+* Database Connection
+
+---
+
+# Step 1 - Create Project
+
+Create a new .NET 8 Web API project.
+
+```bash
+dotnet new webapi -n WarrantyTracker.Api
+cd WarrantyTracker.Api
+```
+
+Remove sample WeatherForecast files if not required.
+
+---
+
+# Step 2 - Install Required Packages
+
+```bash
+dotnet add package Microsoft.EntityFrameworkCore
+
+dotnet add package Microsoft.EntityFrameworkCore.Design
+
+dotnet add package Pomelo.EntityFrameworkCore.MySql
+```
+
+Optional:
+
+```bash
+dotnet add package Mapster
+
+dotnet add package FluentValidation.AspNetCore
+
+dotnet add package Swashbuckle.AspNetCore
+```
+
+---
+
+# Step 3 - Database Design
+
+## Brands
+
+```sql
+CREATE TABLE brands (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(150) NOT NULL UNIQUE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+---
+
+## Purchase Sources
+
+```sql
+CREATE TABLE purchase_sources (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(150) NOT NULL,
+    website VARCHAR(255),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+---
+
+## Devices
+
+```sql
+CREATE TABLE devices (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+
+    name VARCHAR(150) NOT NULL,
+
+    brand_id BIGINT NOT NULL,
+
+    model_number VARCHAR(100),
+
+    serial_number VARCHAR(150),
+
+    purchase_date DATE,
+
+    purchase_source_id BIGINT,
+
+    price DECIMAL(10,2),
+
+    notes TEXT,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_devices_brand
+        FOREIGN KEY (brand_id)
+        REFERENCES brands(id),
+
+    CONSTRAINT fk_devices_purchase_source
+        FOREIGN KEY (purchase_source_id)
+        REFERENCES purchase_sources(id)
+);
+```
+
+---
+
+## Warranty Registrations
+
+```sql
+CREATE TABLE warranty_registrations (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+
+    device_id BIGINT NOT NULL,
+
+    warranty_start DATE NOT NULL,
+
+    warranty_end DATE NOT NULL,
+
+    registration_number VARCHAR(100),
+
+    remarks TEXT,
+
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_warranty_device
+        FOREIGN KEY (device_id)
+        REFERENCES devices(id)
+);
+```
+
+---
+
+# Step 4 - Recommended Folder Structure
+
+```text
+WarrantyTracker.Api
+│
+├── Controllers
+│   ├── BrandsController.cs
+│   ├── DevicesController.cs
+│   ├── PurchaseSourcesController.cs
+│   └── WarrantyRegistrationsController.cs
+│
+├── Services
+│   ├── Interfaces
+│   │   ├── IBrandService.cs
+│   │   ├── IDeviceService.cs
+│   │   ├── IPurchaseSourceService.cs
+│   │   └── IWarrantyRegistrationService.cs
+│   │
+│   ├── BrandService.cs
+│   ├── DeviceService.cs
+│   ├── PurchaseSourceService.cs
+│   └── WarrantyRegistrationService.cs
+│
+├── Repositories
+│   ├── Interfaces
+│   │   ├── IBrandRepository.cs
+│   │   ├── IDeviceRepository.cs
+│   │   ├── IPurchaseSourceRepository.cs
+│   │   └── IWarrantyRegistrationRepository.cs
+│   │
+│   ├── BrandRepository.cs
+│   ├── DeviceRepository.cs
+│   ├── PurchaseSourceRepository.cs
+│   └── WarrantyRegistrationRepository.cs
+│
+├── Models
+│
+├── DTOs
+│
+├── Data
+│   └── ApplicationDbContext.cs
+│
+├── Mappings
+│
+├── Common
+│
+├── Middleware
+│
+├── Program.cs
+│
+└── appsettings.json
+```
+
+---
+
+# Step 5 - Configure Database Connection
+
+## appsettings.json
+
+Example:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "server=localhost;database=warranty_tracker;user=root;password=yourpassword"
+  }
+}
+```
+
+---
+
+# Step 6 - Create Entity Models
+
+## Brand
+
+Properties:
+
+```text
+Id
+Name
+CreatedAt
+```
+
+---
+
+## PurchaseSource
+
+Properties:
+
+```text
+Id
+Name
+Website
+CreatedAt
+```
+
+---
+
+## Device
+
+Properties:
+
+```text
+Id
+Name
+BrandId
+ModelNumber
+SerialNumber
+PurchaseDate
+PurchaseSourceId
+Price
+Notes
+CreatedAt
+```
+
+Navigation Properties:
+
+```text
+Brand
+PurchaseSource
+WarrantyRegistrations
+```
+
+---
+
+## WarrantyRegistration
+
+Properties:
+
+```text
+Id
+DeviceId
+WarrantyStart
+WarrantyEnd
+RegistrationNumber
+Remarks
+CreatedAt
+```
+
+Navigation:
+
+```text
+Device
+```
+
+---
+
+# Step 7 - Create DTOs
+
+## Brand DTOs
+
+```text
+CreateBrandDto
+UpdateBrandDto
+BrandResponseDto
+```
+
+---
+
+## Device DTOs
+
+```text
+CreateDeviceDto
+UpdateDeviceDto
+DeviceResponseDto
+```
+
+---
+
+## Purchase Source DTOs
+
+```text
+CreatePurchaseSourceDto
+UpdatePurchaseSourceDto
+PurchaseSourceResponseDto
+```
+
+---
+
+## Warranty Registration DTOs
+
+```text
+CreateWarrantyRegistrationDto
+UpdateWarrantyRegistrationDto
+WarrantyRegistrationResponseDto
+```
+
+---
+
+# Step 8 - Configure ApplicationDbContext
+
+Responsibilities:
+
+* Inherit DbContext
+* Register DbSets
+* Configure Relationships
+* Configure Foreign Keys
+
+DbSets:
+
+```text
+Brands
+Devices
+PurchaseSources
+WarrantyRegistrations
+```
+
+---
+
+# Step 9 - Repository Layer
+
+## Brand Repository
+
+Methods:
+
+```text
+GetAllAsync()
+GetByIdAsync()
+CreateAsync()
+UpdateAsync()
+DeleteAsync()
+ExistsAsync()
+```
+
+---
+
+## Device Repository
+
+Methods:
+
+```text
+GetAllAsync()
+GetByIdAsync()
+CreateAsync()
+UpdateAsync()
+DeleteAsync()
+ExistsAsync()
+```
+
+Include:
+
+```text
+Brand
+PurchaseSource
+WarrantyRegistrations
+```
+
+---
+
+## Purchase Source Repository
+
+Methods:
+
+```text
+GetAllAsync()
+GetByIdAsync()
+CreateAsync()
+UpdateAsync()
+DeleteAsync()
+ExistsAsync()
+```
+
+---
+
+## Warranty Registration Repository
+
+Methods:
+
+```text
+GetAllAsync()
+GetByIdAsync()
+CreateAsync()
+UpdateAsync()
+DeleteAsync()
+ExistsAsync()
+```
+
+---
+
+# Step 10 - Service Layer
+
+## Brand Service
+
+Responsibilities:
+
+```text
+Create Brand
+Update Brand
+Delete Brand
+Get Brand
+Get All Brands
+```
+
+Validation:
+
+```text
+Brand name required
+Brand name unique
+```
+
+---
+
+## Device Service
+
+Responsibilities:
+
+```text
+Create Device
+Update Device
+Delete Device
+Get Device
+Get All Devices
+```
+
+Validation:
+
+```text
+Brand must exist
+Purchase Source must exist
+Price >= 0
+```
+
+---
+
+## Purchase Source Service
+
+Responsibilities:
+
+```text
+Create Purchase Source
+Update Purchase Source
+Delete Purchase Source
+Get Purchase Source
+Get All Purchase Sources
+```
+
+---
+
+## Warranty Registration Service
+
+Responsibilities:
+
+```text
+Create Warranty
+Update Warranty
+Delete Warranty
+Get Warranty
+Get All Warranties
+```
+
+Validation:
+
+```text
+Device exists
+
+WarrantyStart <= WarrantyEnd
+```
+
+---
+
+# Step 11 - Register Dependencies
+
+Register:
+
+```text
+ApplicationDbContext
+
+Repositories
+
+Services
+```
+
+Dependency Flow:
+
+```text
+IBrandRepository
+    →
+BrandRepository
+
+IBrandService
+    →
+BrandService
+```
+
+Repeat for all entities.
+
+---
+
+# Step 12 - Create Controllers
+
+## Brands Controller
+
+Route:
+
+```http
+/api/brands
+```
+
+Endpoints:
+
+```http
+GET      /api/brands
+
+GET      /api/brands/{id}
+
+POST     /api/brands
+
+PUT      /api/brands/{id}
+
+DELETE   /api/brands/{id}
+```
+
+Dependency:
+
+```text
+IBrandService
+```
+
+---
+
+## Devices Controller
+
+Route:
+
+```http
+/api/devices
+```
+
+Endpoints:
+
+```http
+GET      /api/devices
+
+GET      /api/devices/{id}
+
+POST     /api/devices
+
+PUT      /api/devices/{id}
+
+DELETE   /api/devices/{id}
+```
+
+Dependency:
+
+```text
+IDeviceService
+```
+
+---
+
+## Purchase Sources Controller
+
+Route:
+
+```http
+/api/purchasesources
+```
+
+Endpoints:
+
+```http
+GET      /api/purchasesources
+
+GET      /api/purchasesources/{id}
+
+POST     /api/purchasesources
+
+PUT      /api/purchasesources/{id}
+
+DELETE   /api/purchasesources/{id}
+```
+
+Dependency:
+
+```text
+IPurchaseSourceService
+```
+
+---
+
+## Warranty Registrations Controller
+
+Route:
+
+```http
+/api/warrantyregistrations
+```
+
+Endpoints:
+
+```http
+GET      /api/warrantyregistrations
+
+GET      /api/warrantyregistrations/{id}
+
+POST     /api/warrantyregistrations
+
+PUT      /api/warrantyregistrations/{id}
+
+DELETE   /api/warrantyregistrations/{id}
+```
+
+Dependency:
+
+```text
+IWarrantyRegistrationService
+```
+
+---
+
+# Step 13 - API Response Standard
+
+Success:
+
+```json
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {}
+}
+```
+
+Error:
+
+```json
+{
+  "success": false,
+  "message": "Resource not found"
+}
+```
+
+Validation Error:
+
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "errors": [
+    "Brand Name is required"
+  ]
+}
+```
+
+---
+
+# Step 14 - Testing Checklist
+
+## Brands
+
+* Create Brand
+* Update Brand
+* Delete Brand
+* Get Brand
+* Get All Brands
+
+---
+
+## Purchase Sources
+
+* Create Purchase Source
+* Update Purchase Source
+* Delete Purchase Source
+* Get Purchase Source
+* Get All Purchase Sources
+
+---
+
+## Devices
+
+* Create Device
+* Update Device
+* Delete Device
+* Get Device
+* Get All Devices
+
+---
+
+## Warranty Registrations
+
+* Create Warranty
+* Update Warranty
+* Delete Warranty
+* Get Warranty
+* Get All Warranties
+
+---
+
+# Final Implementation Flow
+
+<img width="35%" alt="software-architecture-flowchart-with-database" src="https://github.com/user-attachments/assets/0f5f2f3d-869c-49b8-9a1a-ca99ba1c85ba" />
+
+```text
+HTTP Request
+    ↓
+Controller
+    ↓
+Service
+    ↓
+Repository
+    ↓
+ApplicationDbContext
+    ↓
+MySQL Database
+    ↓
+Repository
+    ↓
+Service
+    ↓
+Controller
+    ↓
+HTTP Response
+```
