@@ -50,10 +50,13 @@ MySQL Database
 
 Create a new .NET 8 Web API project.
 
-```bash
-dotnet new webapi -n WarrantyTracker.Api
-cd WarrantyTracker.Api
-```
+<img width="90%" alt="image" src="https://github.com/user-attachments/assets/6fcd20e6-4cfa-4976-af5b-904e5dafaf01" />
+
+<img width="90%" alt="image" src="https://github.com/user-attachments/assets/06c185a1-f8eb-4d1b-823a-3081917749c5" />
+
+<img width="90%" alt="image" src="https://github.com/user-attachments/assets/987edc4e-8168-4c3f-a64f-d366a4007eb1" />
+
+<img width="90%" alt="image" src="https://github.com/user-attachments/assets/c1c04a74-1cc3-46ef-9f4a-cab20107cc5a" />
 
 Remove sample WeatherForecast files if not required.
 
