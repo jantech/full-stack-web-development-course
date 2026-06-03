@@ -195,20 +195,148 @@ WarrantyTracker.Api
 
 ---
 
-# Step 5 - Configure Database Connection
+# Configure Database Connection
 
-## appsettings.json
 
-Example:
+## Step 1: Store Database Details
+
+### appsettings.json
 
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "server=localhost;database=warranty_tracker;user=root;password=yourpassword"
+    "DefaultConnection": "server=localhost;database=warranty_tracker;user=root;password=root123"
   }
 }
 ```
 
+This tells the application:
+
+```text
+MySQL Server = localhost
+Database = warranty_tracker
+Username = root
+Password = root123
+```
+
+---
+
+## Step 2: Connect ASP.NET to MySQL
+
+### Program.cs
+
+```csharp
+var connectionString =
+    builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(
+        connectionString,
+        ServerVersion.AutoDetect(connectionString)
+    ));
+```
+
+explanation:
+
+```text
+Read connection string
+        ↓
+Connect to MySQL
+        ↓
+Create AppDbContext
+```
+
+---
+
+## Step 3: Create AppDbContext
+
+### AppDbContext.cs
+
+```csharp
+public class AppDbContext : DbContext
+{
+    public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options)
+    {
+    }
+
+    public DbSet<Brand> Brands { get; set; }
+
+    public DbSet<Device> Devices { get; set; }
+}
+```
+
+explanation:
+
+```text
+AppDbContext
+    ↓
+Brands Table
+    ↓
+Devices Table
+```
+
+---
+
+## Step 4: Use in Controller
+
+```csharp
+public class BrandsController : ControllerBase
+{
+    private readonly AppDbContext _context;
+
+    public BrandsController(AppDbContext context)
+    {
+        _context = context;
+    }
+}
+```
+
+Now the controller can access database tables.
+
+---
+
+## Complete Flow
+
+```text
+Browser
+   ↓
+BrandsController
+   ↓
+AppDbContext
+   ↓
+Brands Table
+   ↓
+MySQL Database
+```
+
+Example:
+
+```csharp
+var brands = await _context.Brands.ToListAsync();
+```
+
+EF Core automatically converts it into:
+
+```sql
+SELECT * FROM brands;
+```
+
+---
+
+### One-line Explanation
+
+**AppDbContext is the bridge between ASP.NET Core and MySQL.**
+
+```text
+ASP.NET Core
+      ↕
+  AppDbContext
+      ↕
+     MySQL
+```
+
+---
 ---
 
 # Step 6 - Create Entity Models
