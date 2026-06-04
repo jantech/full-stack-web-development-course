@@ -134,7 +134,7 @@ HTTPS: https://localhost:7045/scalar/v1
 
 HTTP: http://localhost:5062/scalar/v1
 
-
+<img width="80%" alt="image" src="https://github.com/user-attachments/assets/a82dfe7a-f1d2-4cf4-8b04-03dd45dbf077" />
 
 ---
 
@@ -332,7 +332,16 @@ Devices Table
 
 ---
 
-## Step 4: Use in Controller
+## Step 4: Create and Use in Controller
+
+<img width="70%" alt="image" src="https://github.com/user-attachments/assets/ade397be-6f0d-4f1c-a7d8-b937c14b8c64" />
+
+<img width="70%" alt="image" src="https://github.com/user-attachments/assets/621c84fb-363d-45e2-807c-306cfff14cba" />
+
+<img width="70%" alt="image" src="https://github.com/user-attachments/assets/ffa777c8-98a3-466b-a0e5-df0171a90fec" />
+
+<img width="70%" alt="image" src="https://github.com/user-attachments/assets/681e133e-6897-4084-8b36-ce5b8e6d3b63" />
+
 
 ```csharp
 public class BrandsController : ControllerBase
