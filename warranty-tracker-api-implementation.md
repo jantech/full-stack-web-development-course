@@ -140,74 +140,9 @@ HTTP: http://localhost:5062/scalar/v1
 
 # Step 3 - Database Design
 
-## Brands
+## Database Schema
 
-```sql
-CREATE TABLE brands (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(128) NOT NULL UNIQUE,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-## Purchase Sources
-
-```sql
-CREATE TABLE purchase_sources (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(128) NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-);
-```
-
-## Devices
-
-```sql
-CREATE TABLE devices (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    name VARCHAR(128) NOT NULL,
-    brand_id INT NOT NULL,
-    model_number VARCHAR(50),
-    warranty_months INT NOT NULL,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_device_brand
-        FOREIGN KEY (brand_id)
-        REFERENCES brands(id)
-        ON DELETE CASCADE
-);
-```
-
-## Warranty Registrations
-
-```sql
-CREATE TABLE user_warranty_register (
-    id BIGINT PRIMARY KEY AUTO_INCREMENT,
-
-    owner_name VARCHAR(128) NOT NULL,
-    email_address VARCHAR(100),
-    mobile_number VARCHAR(15) NOT NULL,
-
-    device_id INT NOT NULL,
-    purchase_source_id INT,
-
-    purchase_date DATE NOT NULL,
-    warranty_start DATE NOT NULL,
-
-    invoice_file VARCHAR(255),
-    notes TEXT,
-
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT fk_register_device
-        FOREIGN KEY (device_id)
-        REFERENCES devices(id),
-
-    CONSTRAINT fk_register_source
-        FOREIGN KEY (purchase_source_id)
-        REFERENCES purchase_sources(id)
-);
-```
+See [Warranty Tracker Database Schema](./warranty-tracker-db-schema.md)
 
 ---
 
