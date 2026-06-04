@@ -70,17 +70,32 @@ dotnet add package Microsoft.EntityFrameworkCore
 dotnet add package Microsoft.EntityFrameworkCore.Design
 
 dotnet add package Pomelo.EntityFrameworkCore.MySql
+
+dotnet add package Scalar.AspNetCore
+
+dotnet add package Scalar.AspNetCore.Microsoft
 ```
 
-Optional:
+---
 
-```bash
-dotnet add package Mapster
+## How to add nuget packages 
 
-dotnet add package FluentValidation.AspNetCore
+<img width="70%" alt="image" src="https://github.com/user-attachments/assets/59b05b22-437c-46e1-996e-2fb064d48e95" />
+<img width="90%" alt="image" src="https://github.com/user-attachments/assets/0dba58c7-78ef-4b11-accc-5902513f8540" />
 
-dotnet add package Swashbuckle.AspNetCore
+#### Add in Program.cs:
+
+```csharp
+builder.Services.AddOpenApi();
+
+var app = builder.Build();
+
+app.MapOpenApi();
+app.MapScalarApiReference();
+
+app.Run();
 ```
+
 
 ---
 
