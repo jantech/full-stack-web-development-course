@@ -1,4 +1,4 @@
-# Warranty Tracker API - .NET 8 Web API Implementation Guide
+# Warranty Tracker API - .NET 10 Web API Implementation Guide
 
 ## Architecture
 
@@ -90,11 +90,35 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-app.MapOpenApi();
-app.MapScalarApiReference();
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference(options =>
+    {
+        options
+            .WithTitle("Warranty Tracker API")
+            .WithTheme(ScalarTheme.Purple)
+            .WithDefaultHttpClient(ScalarTarget.CSharp, ScalarClient.HttpClient);
+    });
+}
 
 app.Run();
 ```
+
+#### Add in Properties/launchSettings.json
+
+Verify below in Launch Settings file 
+
+✅ Environment set to Development
+
+✅ launchBrowser set to true
+
+**✅ launchUrl set to scalar/v1**
+
+
+**Example: **
+<img width="786" height="623" alt="image" src="https://github.com/user-attachments/assets/070bea99-23ce-43e6-8a21-e5eee6f99b0d" />
 
 
 ---
