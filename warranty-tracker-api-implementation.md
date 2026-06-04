@@ -406,7 +406,64 @@ namespace WarrantyTracker.Server.Controllers
 
 ---
 
-# Step 6 - Create Entity Models
+# Step 6 - API Implementation List
+
+> **Note:** 🟢 indicates endpoints implemented in Version 1 (MVP). Additional endpoints will be added in future versions.
+
+### Brands API
+
+* `GET /api/brands` - Get all brands  🟢
+* `GET /api/brands/{id}` - Get brand by ID  🟢
+* `POST /api/brands` - Create brand
+* `PUT /api/brands/{id}` - Update brand
+* `DELETE /api/brands/{id}` - Delete brand
+
+---
+
+### Purchase Sources API
+
+* `GET /api/purchasesources` - Get all purchase sources  🟢
+* `GET /api/purchasesources/{id}` - Get purchase source by ID  🟢
+* `POST /api/purchasesources` - Create purchase source
+* `PUT /api/purchasesources/{id}` - Update purchase source
+* `DELETE /api/purchasesources/{id}` - Delete purchase source
+
+---
+
+### Devices API
+
+* `GET /api/devices` - Get all devices  🟢
+* `GET /api/devices/{id}` - Get device by ID  🟢
+* `GET /api/devices/search?name={name}` - Search devices by name  🟢
+* `POST /api/devices` - Create device
+* `PUT /api/devices/{id}` - Update device
+* `DELETE /api/devices/{id}` - Delete device
+
+---
+
+### Warranty Registrations API
+
+* `GET /api/warrantyregistrations` - Get all warranty registrations  🟢
+* `GET /api/warrantyregistrations/{id}` - Get warranty registration by ID  🟢
+* `GET /api/warrantyregistrations/mobile/{mobileNumber}` - Get warranty registrations by mobile number  🟢
+* `POST /api/warrantyregistrations` - Create warranty registration  🟢
+* `PUT /api/warrantyregistrations/{id}` - Update warranty registration
+* `DELETE /api/warrantyregistrations/{id}` - Delete warranty registration
+
+---
+
+### API Summary
+
+| Module                 | Endpoints        |
+| ---------------------- | ---------------- |
+| Brands                 | 5                |
+| Purchase Sources       | 5                |
+| Devices                | 6                |
+| Warranty Registrations | 6                |
+| **Total**              | **22 Endpoints** |
+
+
+---
 
 ## Brand
 
