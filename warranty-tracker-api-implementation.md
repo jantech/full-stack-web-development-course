@@ -259,7 +259,7 @@ WarrantyTracker.Api
 ```json
 {
   "ConnectionStrings": {
-    "DefaultConnection": "server=localhost;database=warranty_tracker;user=root;password=root123"
+    "DefaultConnection": "server=localhost;database=warranty_tracker;user=root;password=root123;pooling=true;charset=utf8;convert zero datetime=true;"
   }
 }
 ```
