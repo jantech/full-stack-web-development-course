@@ -117,8 +117,23 @@ Verify below in Launch Settings file
 **✅ launchUrl set to scalar/v1**
 
 
-**Example: **
+#### Example:
+
 <img width="786" height="623" alt="image" src="https://github.com/user-attachments/assets/070bea99-23ce-43e6-8a21-e5eee6f99b0d" />
+
+
+### To view your Scalar UI:
+
+1.	Press **F5** in Visual Studio
+2.	Browser will automatically open to: **https://localhost:7045/scalar/v1**
+3.	You'll see your interactive API documentation with the WeatherForecast endpoint
+
+**Manual URLs (if needed):**
+
+HTTPS: https://localhost:7045/scalar/v1
+
+HTTP: http://localhost:5062/scalar/v1
+
 
 
 ---
