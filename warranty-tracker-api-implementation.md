@@ -64,14 +64,11 @@ Remove sample WeatherForecast files if not required.
 
 # Step 2 - Install Required Packages
 
-```bash
-dotnet add package Microsoft.EntityFrameworkCore
-
-dotnet add package Pomelo.EntityFrameworkCore.MySql
-
-dotnet add package Scalar.AspNetCore
-
-dotnet add package Scalar.AspNetCore.Microsoft
+```csproj
+<PackageReference Include="Scalar.AspNetCore" Version="2.14.14" />
+<PackageReference Include="Scalar.AspNetCore.Microsoft" Version="2.14.14" />
+<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
 ```
 
 ---
